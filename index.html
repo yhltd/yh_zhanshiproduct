@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>案例分享库 - YH Zhanshi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+            background-color: #f8fafc;
+        }
+        .category-pill {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .video-card {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .video-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 30px 60px -12px rgba(15, 23, 42, 0.2);
+        }
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        #videoModal, #passwordModal {
+            display: none;
+            backdrop-filter: blur(16px);
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .business-bg {
+            background: radial-gradient(circle at top right, #f1f5f9 0%, #f8fafc 100%);
+        }
+        .hero-overlay {
+            background: linear-gradient(to bottom, rgba(0, 31, 63, 0.7), rgba(0, 31, 63, 0.4));
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-up {
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .decorative-blob {
+            position: absolute;
+            filter: blur(100px);
+            z-index: -1;
+            opacity: 0.3;
+            border-radius: 50%;
+        }
+        .text-gradient {
+            background: linear-gradient(to right, #001f3f, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="text-slate-900 business-bg min-h-screen overflow-x-hidden">
+
+    <div class="decorative-blob w-96 h-96 bg-blue-200 top-[-10%] left-[-10%]"></div>
+    <div class="decorative-blob w-80 h-80 bg-indigo-100 bottom-[10%] right-[-5%]"></div>
+
+    <nav class="glass-nav sticky top-0 z-50 border-b border-slate-200/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 md:h-20 items-center">
+                <div class="flex items-center gap-3 md:gap-4 group cursor-pointer">
+                    <div class="w-9 h-9 md:w-11 md:h-11 bg-[#001f3f] rounded-xl md:rounded-2xl flex items-center justify-center text-white font-bold shadow-xl tracking-tighter text-lg md:text-xl transition-transform duration-300 group-hover:rotate-6">YH</div>
+                    <div class="flex flex-col">
+                        <span class="text-lg md:text-xl font-bold tracking-tight text-[#001f3f] leading-none">案例分享库</span>
+                        <span class="text-[8px] md:text-[10px] text-slate-400 font-medium tracking-widest uppercase">Digital Showroom</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3 px-3 py-1 bg-slate-100 rounded-full text-[10px] md:text-xs text-slate-500 font-medium border border-slate-200">
+                    <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                    <span class="hidden xs:inline">系统运行中 · 实时更新 · </span><span class="font-bold">V3.0.0.3</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <header class="relative h-[30vh] min-h-[250px] md:h-[40vh] md:min-h-[350px] flex items-center justify-center overflow-hidden text-white">
+        <img src="https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&q=80&w=1920" class="absolute inset-0 w-full h-full object-cover" alt="Software Development Case Study Background">
+        <div class="absolute inset-0 hero-overlay"></div>
+        <div class="relative z-10 text-center px-4 animate-fade-in-up">
+            <div class="inline-block px-4 py-1.5 mb-6 border border-white/30 rounded-full text-xs md:text-sm font-medium backdrop-blur-md bg-white/10 tracking-widest uppercase">
+                Enterprise Solution Gallery
+            </div>
+            <h1 class="text-3xl sm:text-5xl md:text-7xl font-bold mb-6 tracking-tight leading-tight">数字化成功案例库</h1>
+            <p class="text-base md:text-2xl text-slate-300 max-w-3xl mx-auto font-light leading-relaxed opacity-90">
+                汇集行业顶尖数字化转型方案，为您提供可复制的成功经验与视觉灵感
+            </p>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="relative mb-8">
+            <div class="absolute inset-0 flex items-center justify-center -z-10 opacity-30">
+                <div class="w-full h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent"></div>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+                <span class="text-[10px] font-bold tracking-[0.2em] text-slate-400 uppercase">Trusted by Industry Leaders</span>
+                <div class="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-50 grayscale transition-all duration-700 hover:grayscale-0 hover:opacity-100">
+                    <div class="group flex flex-col items-center gap-1 cursor-default">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2103/2103633.png" class="h-8 w-auto transition-transform duration-300 group-hover:scale-110" alt="Enterprise Icon 1">
+                        <span class="text-[9px] font-medium text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300">智能制造</span>
+                    </div>
+                    <div class="group flex flex-col items-center gap-1 cursor-default">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1055/1055644.png" class="h-8 w-auto transition-transform duration-300 group-hover:scale-110" alt="Enterprise Icon 2">
+                        <span class="text-[9px] font-medium text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300">数字化管理</span>
+                    </div>
+                    <div class="group flex flex-col items-center gap-1 cursor-default">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1055/1055666.png" class="h-8 w-auto transition-transform duration-300 group-hover:scale-110" alt="Enterprise Icon 3">
+                        <span class="text-[9px] font-medium text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300">精准排产</span>
+                    </div>
+                    <div class="group flex flex-col items-center gap-1 cursor-default">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1055/1055682.png" class="h-8 w-auto transition-transform duration-300 group-hover:scale-110" alt="Enterprise Icon 4">
+                        <span class="text-[9px] font-medium text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300">财务集成</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sticky top-24 z-30 mb-16 space-y-10">
+            <div class="relative max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-4">
+                <div class="relative flex-1 w-full group">
+                    <div class="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none">
+                        <svg class="h-6 w-6 text-slate-400 group-focus-within:text-blue-600 transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </div>
+                    <input
+                        type="text"
+                        id="searchInput"
+                        placeholder="搜索行业、产品或客户名称..."
+                        class="block w-full pl-12 md:pl-16 pr-8 py-3 md:py-5 border-0 rounded-3xl bg-white placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-blue-500/10 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.08)] transition-all text-base md:text-lg"
+                        oninput="handleSearchChange()"
+                    >
+                </div>
+                <button id="autoPlayBtn" onclick="toggleAutoPlay()" class="flex items-center gap-2 px-6 py-3 md:py-5 bg-white border border-slate-200 rounded-3xl text-xs md:text-sm font-bold text-slate-600 hover:border-[#001f3f] hover:text-[#001f3f] transition-all shadow-[0_20px_50px_-12px_rgba(0,0,0,0.08)] whitespace-nowrap">
+                    <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.01s-1.25.25-1.75.75-1.0 1.75-1.0 2.75v2.25a1.75 1.75 0 001.75 1.75h5.5a1.75 1.75 0 001.75-1.75v-2.25c0-1.0-0.75-2.0-1.75-2.75zM4 12h16M4 8h16M4 16h16"/></svg>
+                    全自动循环播放
+                </button>
+            </div>
+            <div id="categoryBar" class="flex items-center justify-start md:justify-center gap-4 overflow-x-auto no-scrollbar pb-4"></div>
+        </div>
+
+        <div id="productsContainer" class="space-y-20"></div>
+        <div id="pagination" class="relative flex items-center justify-center gap-3 mt-20 mb-12 min-h-[40px]">
+            <div class="absolute left-0 top-0 flex items-center gap-4">
+                <button id="autoPlayBtn" onclick="toggleAutoPlay()" class="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-full text-xs font-bold text-slate-600 hover:border-[#001f3f] hover:text-[#001f3f] transition-all shadow-sm z-10">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.01s-1.25.25-1.75.75-1.0 1.75-1.0 2.75v2.25a1.75 1.75 0 001.75 1.75h5.5a1.75 1.75 0 001.75-1.75v-2.25c0-1.0-0.75-2.0-1.75-2.75zM4 12h16M4 8h16M4 16h16"/></svg>
+                    全自动循环播放
+                </button>
+            </div>
+        </div>
+
+        <div id="emptyState" class="hidden text-center py-32">
+            <div class="text-6xl mb-6 opacity-20">🔍</div>
+            <h3 class="text-2xl font-bold text-slate-900 mb-3">未找到匹配案例</h3>
+            <p class="text-slate-500">请尝试优化搜索关键词或切换分类</p>
+        </div>
+    </main>
+
+    <footer class="py-12 md:py-20 border-t border-slate-200 text-center text-slate-400 text-xs md:text-sm">
+        <div class="flex justify-center gap-4 mb-6">
+            <div class="w-8 h-1 md:w-12 bg-slate-200 rounded-full"></div>
+            <div class="w-4 h-1 bg-indigo-500 rounded-full"></div>
+            <div class="w-8 h-1 md:w-12 bg-slate-200 rounded-full"></div>
+        </div>
+        <p class="px-4">&copy; 2026 YH Zhanshi. All rights reserved. 专业数字化产品方案提供商</p>
+    </footer>
+
+    <!-- Password Modal -->
+    <div id="passwordModal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-xl">
+        <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-md text-center animate-fade-in-up">
+            <div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-6 text-slate-900">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+            </div>
+            <h3 class="text-2xl font-bold text-slate-900 mb-2">访问验证</h3>
+            <p class="text-slate-500 mb-8">此案例为内部资料，请输入查看密码</p>
+            <div class="space-y-4">
+                <input type="password" id="passInput" placeholder="请输入密码" class="block w-full px-4 py-3 border border-slate-200 rounded-xl text-center focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <button onclick="verifyPassword()" class="w-full py-3 bg-[#001f3f] text-white rounded-xl font-bold hover:bg-blue-900 transition-all">确认进入</button>
+            </div>
+            <div id="passError" class="mt-4 text-red-500 text-sm hidden">密码错误，请重新输入</div>
+        </div>
+    </div>
+
+    <!-- Video Player Modal -->
+    <div id="videoModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/90 backdrop-blur-xl">
+        <div class="relative w-full max-w-6xl aspect-video bg-black rounded-3xl overflow-hidden shadow-2xl border border-white/10 mx-auto">
+            <button onclick="closeModal()" class="absolute top-4 right-4 md:top-6 md:right-6 z-10 bg-white/10 hover:bg-white/20 text-white w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center transition text-2xl md:text-3xl backdrop-blur-xl border border-white/20">&times;</button>
+            <video id="videoPlayer" controls loop class="w-full h-full object-contain">
+                <source src="" type="video/mp4">
+            </video>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'yh_product_data';
+        const PASS_KEY = 'yh_access_password';
+        const ITEMS_PER_PAGE = 4;
+        let allData = [];
+        let currentActiveCat = '全部';
+        let currentQuery = '';
+        let currentPage = 1;
+        let filteredFlatList = [];
+        let isAuthenticated = false;
+        let isAutoPlayMode = false;
+        let playQueue = [];
+        let currentQueueIndex = 0;
+
+        async function init() {
+            try {
+                // 尝试从本地 JSON 文件同步最新配置
+                const response = await fetch('yh_product_config.json');
+                if (!response.ok) throw new Error('Network response was not ok');
+                const fileData = await response.json();
+
+                // 如果配置中包含密码，同步到 localStorage 供验证使用
+                if (fileData.accessPassword !== undefined) {
+                    localStorage.setItem(PASS_KEY, fileData.accessPassword);
+                }
+
+                // 将读取到的数据同步到 localStorage，保持管理端和前台一致
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(fileData.products || fileData));
+                allData = fileData.products || fileData;
+            } catch (error) {
+                console.error('Failed to load config from JSON file, falling back to localStorage:', error);
+                const saved = localStorage.getItem(STORAGE_KEY);
+                allData = saved ? JSON.parse(saved) : [];
+            }
+
+            renderCategories();
+            applyFilters();
+            checkPasswordRequired();
+
+            // 绑定视频播放结束事件
+            const player = document.getElementById('videoPlayer');
+            player.onended = () => {
+                if (isAutoPlayMode) {
+                    currentQueueIndex++;
+                    if (currentQueueIndex >= playQueue.length) {
+                        currentQueueIndex = 0; // 回到第一个视频循环
+                    }
+                    playVideo(playQueue[currentQueueIndex]);
+                }
+            };
+        }
+
+        function checkPasswordRequired() {
+            const pass = localStorage.getItem(PASS_KEY);
+            if (pass && pass.trim() !== '') {
+                isAuthenticated = false;
+                document.getElementById('passwordModal').style.display = 'flex';
+            } else {
+                isAuthenticated = true;
+            }
+        }
+
+        function verifyPassword() {
+            const input = document.getElementById('passInput').value;
+            const correctPass = localStorage.getItem(PASS_KEY);
+            if (input === correctPass) {
+                isAuthenticated = true;
+                document.getElementById('passwordModal').style.display = 'none';
+            } else {
+                const err = document.getElementById('passError');
+                err.classList.remove('hidden');
+                setTimeout(() => err.classList.add('hidden'), 3000);
+            }
+        }
+
+        function renderCategories() {
+            const bar = document.getElementById('categoryBar');
+            const categories = ['全部', ...allData.map(c => c.name)];
+            bar.innerHTML = categories.map(cat => `
+                <button
+                    onclick="setActiveCategory('${cat}')"
+                    class="category-pill whitespace-nowrap px-6 py-2 rounded-full text-sm font-semibold border transition-all ${cat === '全部' ? 'bg-[#001f3f] text-white border-[#001f3f] shadow-lg' : 'bg-white text-slate-600 border-slate-200 hover:border-[#001f3f] hover:text-[#001f3f]'}"
+                >
+                    ${cat}
+                </button>
+            `).join('');
+        }
+
+        function setActiveCategory(cat) {
+            currentActiveCat = cat;
+            document.querySelectorAll('.category-pill').forEach(btn => {
+                if(btn.innerText === cat) {
+                    btn.className = 'category-pill whitespace-nowrap px-6 py-2 rounded-full text-sm font-semibold border bg-[#001f3f] text-white border-[#001f3f] shadow-lg';
+                } else {
+                    btn.className = 'category-pill whitespace-nowrap px-6 py-2 rounded-full text-sm font-semibold border bg-white text-slate-600 border-slate-200 hover:border-[#001f3f] hover:text-[#001f3f]';
+                }
+            });
+            currentPage = 1;
+            applyFilters();
+        }
+
+        function handleSearchChange() {
+            currentQuery = document.getElementById('searchInput').value.toLowerCase();
+            currentPage = 1;
+            // 关键修复：当用户开始搜索时，自动将分类切换到“全部”，否则会被 currentActiveCat 过滤掉
+            if (currentQuery !== '') {
+                currentActiveCat = '全部';
+                document.querySelectorAll('.category-pill').forEach(btn => {
+                    if(btn.innerText === '全部') {
+                        btn.className = 'category-category-pill whitespace-nowrap px-6 py-2 rounded-full text-sm font-semibold border bg-[#001f3f] text-white border-[#001f3f] shadow-lg';
+                    } else {
+                        btn.className = 'category-pill whitespace-nowrap px-6 py-2 rounded-full text-sm font-semibold border bg-white text-slate-600 border-slate-200 hover:border-[#001f3f] hover:text-[#001f3f]';
+                    }
+                });
+            }
+            applyFilters();
+        }
+
+        function applyFilters() {
+            filteredFlatList = [];
+            allData.forEach(cat => {
+                const catName = cat.name || '';
+                const catMatch = catName.toLowerCase().includes(currentQuery);
+
+                // 关键修复：只要类别匹配，就将其标记为需要显示
+                // 同时过滤出该类别下匹配产品
+                const filteredProds = cat.products.filter(p => (p.name || '').toLowerCase().includes(currentQuery));
+
+                if (catMatch || filteredProds.length > 0) {
+                    if (currentActiveCat !== '全部' && catName !== currentActiveCat) return;
+
+                    // 逻辑调整：
+                    // 1. 如果类别名称匹配，显示该类别下【所有】产品，方便用户查看该类别全貌
+                    // 2. 如果类别不匹配但产品匹配，则【仅显示】匹配的产品
+                    const productsToShow = catMatch ? cat.products : filteredProds;
+
+                    if (productsToShow && productsToShow.length > 0) {
+                        filteredFlatList.push({ category: catName, products: productsToShow });
+                    }
+                }
+            });
+            renderProducts();
+        }
+
+        function renderProducts() {
+            const container = document.getElementById('productsContainer');
+            const empty = document.getElementById('emptyState');
+            const pagination = document.getElementById('pagination');
+            container.innerHTML = '';
+
+            if (filteredFlatList.length === 0) {
+                empty.classList.remove('hidden');
+                pagination.innerHTML = '';
+                return;
+            }
+            empty.classList.add('hidden');
+            pagination.innerHTML = '';
+
+            filteredFlatList.forEach(group => {
+                const categoryId = group.category.replace(/\s+/g, '-');
+                const totalItems = group.products.length;
+                const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+                const currentCatPage = parseInt(localStorage.getItem(`page_${categoryId}`) || '1');
+
+                const start = (currentCatPage - 1) * ITEMS_PER_PAGE;
+                const end = start + ITEMS_PER_PAGE;
+                const paginatedProds = group.products.slice(start, end);
+
+                const section = document.createElement('div');
+                section.className = "animate-fade-in-up mb-20";
+                section.innerHTML = `
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10">
+                        <div class="flex items-center gap-4">
+                            <div class="w-1 h-8 bg-[#001f3f] rounded-full"></div>
+                            <h2 class="text-xl md:text-2xl font-bold text-slate-900 tracking-tight">${group.category}</h2>
+                        </div>
+                        <div class="flex items-center justify-end gap-1 md:gap-2 overflow-x-auto no-scrollbar py-1">
+                            ${renderCategoryPagination(categoryId, currentCatPage, totalPages)}
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-10">
+                        ${paginatedProds.map((prod, idx) => {
+                            const uniqueId = `vid-${categoryId}-${idx}`;
+                            return `
+                            <div class="video-card group bg-white p-3 rounded-3xl border border-slate-100 hover:border-slate-300 cursor-pointer flex flex-col gap-4"
+                                 onmouseenter="previewVideo('${uniqueId}', true)"
+                                 onmouseleave="previewVideo('${uniqueId}', false)"
+                                 onclick="handleVideoClick('${prod.path}')">
+                                <div class="relative aspect-video rounded-2xl overflow-hidden shadow-sm bg-slate-100">
+                                    <video
+                                        id="${uniqueId}"
+                                        data-src="${prod.path}#t=0.1"
+                                        preload="none"
+                                        muted
+                                        loop
+                                        playsinline
+                                        class="w-full h-full object-cover opacity-100 group-hover:opacity-100 transition-opacity duration-500"
+                                    ></video>
+                                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                        <div class="w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full shadow-xl flex items-center justify-center text-slate-900 transition-transform duration-300 group-hover:scale-110 opacity-70 group-hover:opacity-100">
+                                            <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                        </div>
+                                    </div>
+                                    <div class="absolute bottom-3 right-3 bg-[#001f3f]/80 text-white text-[9px] font-bold px-2 py-1 rounded-md backdrop-blur-sm uppercase tracking-widest">Video</div>
+                                </div>
+                                <div class="px-2 pb-2 flex items-center justify-between">
+                                    <h3 class="font-bold text-slate-800 group-hover:text-blue-600 transition-colors truncate text-sm">${prod.name}</h3>
+                                    <svg class="w-4 h-4 text-slate-300 group-hover:text-slate-900 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                </div>
+                            </div>`;
+                        }).join('')}
+                    </div>
+                `;
+                container.appendChild(section);
+            });
+        }
+
+        function renderCategoryPagination(catId, current, total) {
+            if (total <= 1) return '';
+
+            // 智能分页逻辑：如果总页数过多，仅显示前后页和当前页
+            let pages = [];
+            if (total <= 7) {
+                for (let i = 1; i <= total; i++) pages.push(i);
+            } else {
+                if (current <= 4) {
+                    pages = [1, 2, 3, 4, 5, '...', total];
+                } else if (current >= total - 3) {
+                    pages = [1, '...', total - 4, total - 3, total - 2, total - 1, total];
+                } else {
+                    pages = [1, '...', current - 1, current, current + 1, '...', total];
+                }
+            }
+
+            let html = `<button onclick="changeCategoryPage('${catId}', ${current - 1})" ${current === 1 ? 'disabled' : ''} class="px-2 py-1 rounded-lg border text-[10px] md:text-xs font-bold whitespace-nowrap ${current === 1 ? 'text-slate-300 border-slate-100 cursor-not-allowed' : 'text-slate-600 hover:bg-slate-100'}">PREV</button>`;
+
+            pages.forEach(p => {
+                if (p === '...') {
+                    html += `<span class="text-slate-400 px-1 text-[10px] md:text-xs">...</span>`;
+                } else {
+                    html += `<button onclick="changeCategoryPage('${catId}', ${p})" class="w-6 h-6 md:w-8 md:h-8 rounded-lg text-[10px] md:text-xs font-bold transition ${current === p ? 'bg-[#001f3f] text-white shadow-md' : 'text-slate-600 hover:bg-slate-100'}">${p}</button>`;
+                }
+            });
+
+            html += `<button onclick="changeCategoryPage('${catId}', ${current + 1})" ${current === total ? 'disabled' : ''} class="px-2 py-1 rounded-lg border text-[10px] md:text-xs font-bold whitespace-nowrap ${current === total ? 'text-slate-300 border-slate-100 cursor-not-allowed' : 'text-slate-600 hover:bg-slate-100'}">NEXT</button>`;
+
+            html += `
+                <div class="flex items-center gap-1 ml-2 border-l pl-2">
+                    <input type="number"
+                           onkeydown="if(event.key==='Enter') jumpCategoryPage('${catId}', this.value)"
+                           placeholder="页码"
+                           class="w-8 h-6 border rounded text-[10px] text-center focus:outline-none focus:ring-1 focus:ring-blue-500">
+                    <button onclick="jumpCategoryPage('${catId}', this.previousElementSibling.value)" class="text-[10px] font-bold text-slate-400 hover:text-blue-600 transition">跳转</button>
+                </div>
+            `;
+
+            return html;
+        }
+
+        function changeCategoryPage(catId, page) {
+            if (page < 1) return;
+            localStorage.setItem(`page_${catId}`, page);
+            renderProducts();
+        }
+
+        function jumpCategoryPage(catId, page) {
+            const p = parseInt(page);
+            if (isNaN(p)) return;
+
+            // 找到该类别的数据
+            const catData = allData.find(c => c.name.replace(/\s+/g, '-') === catId);
+            // 如果没找到，尝试遍历 allData 匹配
+            const actualCat = allData.find(c => c.name.replace(/\s+/g, '-') === catId) || allData[0];
+
+            // 更加可靠的获取总页数方式：从 filteredFlatList 中寻找
+            const group = filteredFlatList.find(g => g.category.replace(/\s+/g, '-') === catId);
+            if (!group) return;
+
+            const totalPages = Math.ceil(group.products.length / ITEMS_PER_PAGE);
+            if (p >= 1 && p <= totalPages) {
+                localStorage.setItem(`page_${catId}`, p);
+                renderProducts();
+            } else {
+                alert(`请输入 1 到 ${totalPages} 之间的页码`);
+            }
+        }
+
+        function handleVideoClick(path) {
+            if (!isAuthenticated) {
+                document.getElementById('passwordModal').style.display = 'flex';
+                return;
+            }
+            playVideo(path);
+        }
+
+        function previewVideo(id, play) {
+            const video = document.getElementById(id);
+            if (!video) return;
+            if (play) {
+                if (!video.src) {
+                    video.src = video.getAttribute('data-src');
+                }
+                video.play().catch(e => console.log("Auto-play prevented"));
+            } else {
+                video.pause();
+                video.src = ""; // 清除 src 释放内存和带宽
+                video.load();
+            }
+        }
+
+        function renderPagination(totalPages) {
+            const pagination = document.getElementById('pagination');
+            if (totalPages <= 1) {
+                pagination.innerHTML = '';
+                return;
+            }
+            let html = `
+                <button onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}
+                    class="px-5 py-2 rounded-xl border text-sm font-semibold transition ${currentPage === 1 ? 'text-slate-300 border-slate-100 cursor-not-allowed' : 'text-slate-600 border-slate-200 hover:bg-white hover:border-slate-900 hover:text-slate-900'}">
+                    PREV
+                </button>
+            `;
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    html += `
+                        <button onclick="changePage(${i})"
+                            class="w-10 h-10 rounded-xl text-sm font-bold transition ${currentPage === i ? 'bg-[#001f3f] text-white shadow-lg' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'}">
+                            ${i}
+                        </button>
+                    `;
+                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    html += `<span class="text-slate-400 px-1">...</span>`;
+                }
+            }
+            html += `
+                <button onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}
+                    class="px-5 py-2 rounded-xl border text-sm font-semibold transition ${currentPage === totalPages ? 'text-slate-300 border-slate-100 cursor-not-allowed' : 'text-slate-600 border-slate-200 hover:bg-white hover:border-slate-900 hover:text-slate-900'}">
+                    NEXT
+                </button>
+            `;
+            pagination.innerHTML = html;
+        }
+
+        function changePage(page) {
+            currentPage = page;
+            renderProducts();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function playVideo(path) {
+            const modal = document.getElementById('videoModal');
+            const player = document.getElementById('videoPlayer');
+
+            player.pause();
+            player.src = "";
+
+            setTimeout(() => {
+                player.src = path;
+                modal.style.display = 'flex';
+
+                if (isAutoPlayMode) {
+                    player.loop = false;
+                } else {
+                    player.loop = true;
+                }
+
+                player.play();
+            }, 50);
+        }
+
+        function toggleAutoPlay() {
+            if (!isAuthenticated) {
+                document.getElementById('passwordModal').style.display = 'flex';
+                return;
+            }
+
+            isAutoPlayMode = !isAutoPlayMode;
+            const btn = document.getElementById('autoPlayBtn');
+
+            if (isAutoPlayMode) {
+                btn.className = 'flex items-center gap-2 px-4 py-2 bg-[#001f3f] border border-[#001f3f] rounded-full text-xs font-bold text-white transition-all shadow-lg scale-105';
+                startAutoPlay();
+            } else {
+                btn.className = 'flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-full text-xs font-bold text-slate-600 hover:border-[#001f3f] hover:text-[#001f3f] transition-all shadow-sm';
+                const player = document.getElementById('videoPlayer');
+                player.loop = true; // 恢复单个循环
+            }
+        }
+
+        function startAutoPlay() {
+            // 收集当前所有筛选结果中的视频路径
+            playQueue = [];
+            filteredFlatList.forEach(group => {
+                group.products.forEach(p => playQueue.push(p.path));
+            });
+
+            if (playQueue.length === 0) {
+                alert('当前没有可播放的视频');
+                isAutoPlayMode = false;
+                document.getElementById('autoPlayBtn').className = 'flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-full text-xs font-bold text-slate-600 hover:border-[#001f3f] hover:text-[#001f3f] transition-all shadow-sm';
+                return;
+            }
+
+            currentQueueIndex = 0;
+            playVideo(playQueue[currentQueueIndex]);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('videoModal');
+            const player = document.getElementById('videoPlayer');
+
+            // 如果在自动播放模式下关闭，则停止自动播放状态
+            if (isAutoPlayMode) {
+                isAutoPlayMode = false;
+                const btn = document.getElementById('autoPlayBtn');
+                btn.className = 'flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-full text-xs font-bold text-slate-600 hover:border-[#001f3f] hover:text-[#001f3f] transition-all shadow-sm';
+            }
+
+            player.pause();
+            player.src = "";
+            modal.style.display = 'none';
+        }
+
+        window.onclick = (e) => {
+            if (e.target === document.getElementById('videoModal')) closeModal();
+        }
+
+        init();
+    </script>
+</body>
+</html>
