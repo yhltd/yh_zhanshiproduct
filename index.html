@@ -16,6 +16,8 @@
         }
         .video-card {
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            -webkit-touch-callout: none; /* 禁止iOS长按菜单 */
+            -webkit-user-select: none;   /* 禁止选中内容 */
         }
         .video-card:hover {
             transform: translateY(-12px);
@@ -192,8 +194,12 @@
     <!-- Video Player Modal -->
     <div id="videoModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/90 backdrop-blur-xl">
         <div class="relative w-full max-w-6xl aspect-video bg-black rounded-3xl overflow-hidden shadow-2xl border border-white/10 mx-auto">
-            <button onclick="closeModal()" class="absolute top-4 right-4 md:top-6 md:right-6 z-10 bg-white/10 hover:bg-white/20 text-white w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center transition text-2xl md:text-3xl backdrop-blur-xl border border-white/20">&times;</button>
-            <video id="videoPlayer" controls loop class="w-full h-full object-contain">
+            <button onclick="closeModal()" class="absolute top-4 right-4 md:top-6 md:right-6 z-20 bg-white/10 hover:bg-white/20 text-white w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center transition text-2xl md:text-3xl backdrop-blur-xl border border-white/20">&times;</button>
+
+            <!-- Video Protection Overlay -->
+            <div id="videoOverlay" class="absolute inset-0 z-10 cursor-pointer" onclick="handleVideoOverlayClick()"></div>
+
+            <video id="videoPlayer" controls loop controlsList="nodownload" oncontextmenu="return false;" class="w-full h-full object-contain" style="pointer-events: none;">
                 <source src="" type="video/mp4">
             </video>
         </div>
@@ -215,17 +221,22 @@
 
         async function init() {
             try {
-                // 尝试从本地 JSON 文件同步最新配置
+                // 1. 必须首先从本地 JSON 文件同步最新配置，确保临时密码实时更新
                 const response = await fetch('yh_product_config.json');
                 if (!response.ok) throw new Error('Network response was not ok');
                 const fileData = await response.json();
 
-                // 如果配置中包含密码，同步到 localStorage 供验证使用
+                // 如果配置中包含主访问密码，同步到 localStorage
                 if (fileData.accessPassword !== undefined) {
                     localStorage.setItem(PASS_KEY, fileData.accessPassword);
                 }
 
-                // 将读取到的数据同步到 localStorage，保持管理端和前台一致
+                // 必须同步临时密码到 localStorage，供 verifyPassword() 实时校验
+                if (fileData.temporary_passwords !== undefined) {
+                    localStorage.setItem('yh_temp_pass_storage', JSON.stringify(fileData.temporary_passwords));
+                }
+
+                // 同步产品数据到 localStorage
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(fileData.products || fileData));
                 allData = fileData.products || fileData;
             } catch (error) {
@@ -264,14 +275,32 @@
         function verifyPassword() {
             const input = document.getElementById('passInput').value;
             const correctPass = localStorage.getItem(PASS_KEY);
+            const tempPasses = JSON.parse(localStorage.getItem('yh_temp_pass_storage')) || [];
+            const now = new Date();
+
+            // 1. 首先检查主访问密码
             if (input === correctPass) {
                 isAuthenticated = true;
                 document.getElementById('passwordModal').style.display = 'none';
-            } else {
-                const err = document.getElementById('passError');
-                err.classList.remove('hidden');
-                setTimeout(() => err.classList.add('hidden'), 3000);
+                return;
             }
+
+            // 2. 其次检查临时密码是否有效
+            const validTempPass = tempPasses.find(tp => {
+                const expiry = new Date(tp.expires_at);
+                return tp.password === input && now <= expiry;
+            });
+
+            if (validTempPass) {
+                isAuthenticated = true;
+                document.getElementById('passwordModal').style.display = 'none';
+                return;
+            }
+
+            // 3. 都没匹配上则报错
+            const err = document.getElementById('passError');
+            err.classList.remove('hidden');
+            setTimeout(() => err.classList.add('hidden'), 3000);
         }
 
         function renderCategories() {
@@ -620,6 +649,15 @@
             player.pause();
             player.src = "";
             modal.style.display = 'none';
+        }
+
+        function handleVideoOverlayClick() {
+            const player = document.getElementById('videoPlayer');
+            if (player.paused) {
+                player.play();
+            } else {
+                player.pause();
+            }
         }
 
         window.onclick = (e) => {

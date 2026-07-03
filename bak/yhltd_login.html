@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>YH 产品登录系统</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --error-color: #ef4444;
+            --bg-color: #f3f4f6;
+            --modal-bg: #ffffff;
+        }
+        body {
+            font-family: "Microsoft YaHei", sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .yhltd-modal {
+            background: var(--modal-bg);
+            width: 360px;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+            animation: fadeIn 0.3s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .modal-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .input-group {
+            margin-bottom: 16px;
+            text-align: left;
+        }
+        .input-group label {
+            display: block;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 6px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #1d4ed8;
+        }
+        .btn-secondary {
+            background-color: #e5e7eb;
+            color: #4b5563;
+            margin-top: 10px;
+        }
+        .message {
+            margin-top: 12px;
+            font-size: 14px;
+            min-height: 20px;
+        }
+        .error { color: var(--error-color); }
+        .success { color: #10b981; }
+        .admin-panel {
+            margin-top: 30px;
+            padding: 20px;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            background: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div id="loginModal" class="modal-overlay">
+        <div class="yhltd-modal">
+            <div class="modal-title">YH 产品登录</div>
+            <div class="input-group">
+                <label>请输入访问密码</label>
+                <input type="password" id="passwordInput" placeholder="******">
+            </div>
+            <button class="btn btn-primary" onclick="handleLogin()">立即登录</button>
+            <div id="loginMsg" class="message"></div>
+        </div>
+    </div>
+    <div id="adminPanel" style="display:none; text-align:center;">
+        <h1>管理员控制面板</h1>
+        <div class="admin-panel">
+            <h3>🔐 临时密码管理 (7天有效)</h3>
+            <div class="input-group" style="max-width: 300px; margin: 0 auto;">
+                <label>设置新临时密码</label>
+                <input type="text" id="newPassInput" placeholder="输入临时密码">
+            </div>
+            <button class="btn btn-primary" style="max-width: 300px;" onclick="setTempPassword()">生成临时密码</button>
+            <div id="adminMsg" class="message"></div>
+        </div>
+        <button class="btn btn-secondary" style="margin-top:20px" onclick="location.reload()">退出登录</button>
+    </div>
+    <script>
+        const storageKey = 'yh_product_config';
+        const MASTER_PASSWORD = 'yhltd';
+
+        function getConfig() {
+            const config = localStorage.getItem(storageKey);
+            return config ? JSON.parse(config) : {
+                accessPassword: MASTER_PASSWORD,
+                temporary_passwords: []
+            };
+        }
+
+        function saveConfig(config) {
+            localStorage.setItem(storageKey, JSON.stringify(config));
+        }
+
+        function setTempPassword() {
+            const newPass = document.getElementById('newPassInput').value;
+            if (!newPass) {
+                showMessage('adminMsg', '请输入密码', 'error');
+                return;
+            }
+            const config = getConfig();
+            const now = new Date();
+            const expireDate = new Date();
+            expireDate.setDate(now.getDate() + 7);
+            const tempPassObj = {
+                password: newPass,
+                created_at: now.toISOString(),
+                expires_at: expireDate.toISOString()
+            };
+            config.temporary_passwords = [tempPassObj];
+            saveConfig(config);
+            showMessage('adminMsg', `临时密码设置成功！有效期至: ${expireDate.toLocaleDateString()}`, 'success');
+            document.getElementById('newPassInput').value = '';
+        }
+
+        function handleLogin() {
+            const inputPass = document.getElementById('passwordInput').value;
+            const config = getConfig();
+
+            // 1. 首先校验主密码 yhltd
+            if (inputPass === MASTER_PASSWORD || (config.accessPassword && inputPass === config.accessPassword)) {
+                showMessage('loginMsg', '管理员登录成功！', 'success');
+                setTimeout(() => {
+                    document.getElementById('loginModal').style.display = 'none';
+                    document.getElementById('adminPanel').style.display = 'block';
+                }, 800);
+                return;
+            }
+
+            // 2. 然后校验临时密码
+            const tempPass = config.temporary_passwords && config.temporary_passwords[0];
+            if (tempPass) {
+                if (inputPass === tempPass.password) {
+                    const now = new Date();
+                    const expireDate = new Date(tempPass.expires_at);
+                    if (now > expireDate) {
+                        showMessage('loginMsg', '该临时密码已过期，请联系管理员重新申请', 'error');
+                        return;
+                    }
+                    showMessage('loginMsg', '临时访问授权成功！', 'success');
+                    setTimeout(() => {
+                        document.getElementById('loginModal').style.display = 'none';
+                        document.getElementById('adminPanel').style.display = 'block';
+                    }, 800);
+                    return;
+                }
+            }
+
+            showMessage('loginMsg', '密码错误或无可用临时访问权限', 'error');
+        }
+
+        function showMessage(elementId, text, type) {
+            const el = document.getElementById(elementId);
+            el.innerText = text;
+            el.className = 'message ' + type;
+        }
+    </script>
+</body>
+</html>
